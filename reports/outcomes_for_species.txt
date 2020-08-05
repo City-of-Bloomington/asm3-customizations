@@ -1,0 +1,66 @@
+Outcomes for species
+###
+Movements
+###
+Any
+###
+Outcomes for a species
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+select a.id,
+       a.datebroughtin,
+       t.animaltype,
+       coalesce(a.activemovementdate, a.deceaseddate) as outcomeDate,
+       case when a.activemovementid > 0 then m.movementtype
+            when a.isdoa         = 1    then 'DOA'
+            when a.puttosleep    = 1    then 'Euthanized'
+            when a.diedoffshelter= 1    then 'Died off shelter'
+       end   as outcomeType,
+       s.sex,
+       a.dateofbirth,
+       a.weight
+from      animal          a
+     join animaltype      t on t.id=a.animaltypeid
+left join adoption        d on d.id=a.activemovementid
+left join lksmovementtype m on m.id=d.movementtype
+     join lksex           s on s.id=a.sex
+where a.speciesid=$ASK SPECIES$
+  and a.nonshelteranimal=0
+  and (a.datebroughtin, coalesce(a.activemovementdate, a.deceaseddate, now()))
+       overlaps
+      (timestamp '$@from$', timestamp '$@to$')
+###
+$$HEADER
+<table>
+    <thead>
+        <tr><th>id</td>
+            <th>Entry Date</th>
+            <th>Intake Type</th>
+            <th>Outcome Date</th>
+            <th>Outcome Type</th>
+            <th>Gender</th>
+            <th>Date of Birth</th>
+            <th>Weight</th>
+        </tr>
+    </thead>
+    <tbody>
+HEADER$$
+$$BODY
+<tr><td>$id</th>
+    <td>$datebroughtin</td>
+    <td>$animaltype</td>
+    <td>$outcomeDate</td>
+    <td>$outcomeType</td>
+    <td>$sex</td>
+    <td>$dateofbirth</td>
+    <td>$weight</td>
+</tr>
+BODY$$
+$$FOOTER
+    </tbody>
+</table>
+FOOTER$$
