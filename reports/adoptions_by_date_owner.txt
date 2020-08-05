@@ -1,0 +1,80 @@
+Adoption by Date Range w/Owner Info
+###
+Movements
+###
+Any
+###
+Adoption between two dates with new Owner Info
+###
+en
+###
+$VAR from DATE Adopted between$
+$VAR to DATE and$
+
+SELECT ShelterCode, AnimalName, MostRecentEntryDate, MovementDate,
+s.SpeciesName AS species, a.DateOfBirth AS BirthDate, a.TimeOnShelter, a.DaysOnShelter, a.IdentichipNumber,
+t.AnimalType AS theType,
+a.BreedName,
+oo.OwnerName AS OOName, oo.OwnerAddress AS OOAddress, oo.OwnerTown AS OOTown, oo.OwnerCounty AS OOCounty, oo.OwnerPostcode AS OOPostcode,
+oo.EmailAddress AS OOEmail,
+no.OwnerName,no.OwnerForeNames AS OwnerFirst, no.OwnerSurname AS OwnerLast, no.OwnerAddress,
+no.OwnerTown, no.OwnerCounty,
+no.OwnerPostcode, no.EmailAddress, no.HomeTelephone, no.WorkTelephone, no.MobileTelephone
+FROM adoption d
+INNER JOIN animal a ON d.AnimalID = a.ID
+INNER JOIN owner no ON d.OwnerID = no.ID
+INNER JOIN animaltype t ON t.ID = a.AnimalTypeID
+INNER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN owner oo ON a.OriginalOwnerID = oo.ID
+WHERE MovementType = 1 AND MovementDate >= '$@from$' AND MovementDate <= '$@to$' ORDER BY MovementDate
+###
+$$HEADER
+<table border="1">
+<tr>
+<td>Sap</td>
+<td>Adoption Date</td>
+<td>Prefix</td>
+<td>First Name</td>
+<td>Last Name</td>
+<td>Address</td>
+<td>City</td>
+<td>State</td>
+<td>Zip</td>
+<td>Phone</td>
+<td>Email</td>
+<td>Email Optln</td>
+<td>Species</td>
+<td>Pet Birthdate</td>
+<td>Pet Name</td>
+<td>Adoption Location</td>
+<td>Retail Partner</td>
+</tr>
+
+HEADER$$
+
+$$BODY
+<tr>
+<td></td>
+<td>$MOVEMENTDATE</td>
+<td></td>
+<td>$OwnerFirst</td>
+<td>$OwnerLast</td>
+<td>$OwnerAddress</td>
+<td>$OwnerTown</td>
+<td>$OwnerCounty</td>
+<td>$OwnerPostcode</td>
+<td>H: $HOMETELEPHONE W: $WORKTELEPHONE C: $MOBILETELEPHONE</td>
+<td>$EmailAddress</td>
+<td></td>
+<td>$species</td>
+<td>$BirthDate</td>
+<td>$ANIMALNAME</td>
+<td></td>
+<td></td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+<h2>Total adoptions: {COUNT.SHELTERCODE}</h2>
+FOOTER$$

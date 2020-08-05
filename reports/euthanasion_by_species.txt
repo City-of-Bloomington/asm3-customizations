@@ -1,0 +1,76 @@
+Euthanasia between two dates grouped by species
+###
+Auditing
+###
+Any
+###
+Euthanasia between two dates grouped by species
+###
+en
+###
+SELECT a.ShelterCode,
+a.AnimalName,
+a.MostRecentEntryDate,
+a.DeceasedDate,
+a.IdentichipNumber,
+a.AnimalAge,
+a.BreedName,
+a.TimeOnShelter,
+a.DaysOnShelter,
+sx.Sex,
+t.AnimalType,
+s.SpeciesName,
+r.ReasonName,
+a.animalcomments as Comments,
+a.ptsreason as Reason
+FROM animal a
+LEFT OUTER JOIN animaltype t ON t.ID = a.AnimalTypeID
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN lksex sx ON sx.ID = a.Sex
+LEFT OUTER JOIN deathreason r ON r.ID = a.PTSReasonID
+WHERE a.DiedOffShelter = 0 AND a.PutToSleep = 1 AND a.DeceasedDate >= '$ASK DATE Euthanasia between $' AND a.DeceasedDate <= '$ASK DATE and $'
+ORDER BY s.speciesName,a.DeceasedDate
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SPECIESNAME</h2>
+
+<table border=1>
+<tr>
+<td><b>Date of Death</b></td>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Microchip</b></td>
+<td><b>Type</b></td>
+<td><b>Age</b></td>
+<td><b>Intake Date</b></td>
+<td><b>Days On Shelter</b></td>
+<td><b>Reason</b></td>
+<td><b>Comments</b></td>
+</tr>
+$$FOOT
+</table>
+<p>Total $SPECIESNAME: {COUNT.SpeciesName}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$deceaseddate</td>
+<td>$sheltercode</td>
+<td>$animalname</td>
+<td>$identichipnumber</td>
+<td>$animaltype ($sex $breedname $speciesname)</td>
+<td>$animalage</td>
+<td>$mostrecententrydate</td>
+<td>$daysonshelter</td>
+<td>$reasonname</td>
+<td>$Reason</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<p>Total deaths: {COUNT.ShelterCode}</p>
+FOOTER$$

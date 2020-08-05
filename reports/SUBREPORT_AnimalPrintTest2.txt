@@ -1,0 +1,34 @@
+SUBREPORT_AnimalPrintTest2
+###
+Auditing
+###
+Any
+###
+A complete printout of an animal test record.
+###
+en
+###
+SELECT testtype.TestName,
+testresult.ResultName,
+animaltest.Cost,
+animaltest.DateRequired,
+animaltest.DateOfTest,
+animaltest.Comments AS TestComments,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animaltest.LastChangedBy END AS GivenBy
+FROM animaltest
+INNER JOIN testtype ON testtype.ID = animaltest.TestTypeID
+INNER JOIN testresult ON testresult.ID = animaltest.TestResultID
+LEFT OUTER JOIN owner vo ON vo.ID = animaltest.AdministeringVetID
+WHERE animaltest.AnimalID = $PARENTKEY$
+ORDER BY DateOfTest
+###
+$$HEADER
+<table cellpadding="5">
+<tr><th>Type</th><th>Administered</th><th>By</th><th>Result</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$TESTNAME</td><td>$DATEOFTEST</td><td>$GIVENBY</td><td>$RESULTNAME</td><td>$TESTCOMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$

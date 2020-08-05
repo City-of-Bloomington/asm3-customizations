@@ -1,0 +1,80 @@
+Intake brought In by and Original Owner
+###
+Auditing
+###
+Any
+###
+Intake by brought in by and original owner given date range
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+$VAR patt STRING Enter a pattern to match the source brought in by name or blank for all$
+
+SELECT DateBroughtIn AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+t.AnimalType,
+sp.SpeciesName,
+AnimalAge,
+se.Sex,
+lo.LocationName,
+ow.OwnerName BroughtBy,
+og.OwnerName OwnerName
+FROM animal
+INNER JOIN animaltype t ON t.ID = animal.AnimalTypeID
+INNER JOIN species sp ON sp.ID = animal.SpeciesID
+LEFT JOIN owner ow ON ow.ID = animal.BroughtInByOwnerID
+LEFT JOIN owner og ON og.ID = animal.OriginalOwnerID
+INNER JOIN internallocation lo ON lo.ID = animal.ShelterLocation
+INNER JOIN lksex se ON se.ID = animal.Sex
+WHERE DateBroughtIn >= '$@from$'
+AND DateBroughtIn <= '$@to$'
+AND (ow.OwnerName Like '%$@patt$%' or og.OwnerName like '%$@patt$%')
+AND NonShelterAnimal = 0
+ORDER BY OwnerName,BroughtBy
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_OwnerName
+$$HEAD
+<h2>$OwnerName</h2>
+<table border=1><tr>
+<td><b>Brought By</b></td>
+<td><b>Date</b></td>
+<td><b>Name</b></td>
+<td><b>Code</b></td>
+<td><b>Reason</b></td>
+<td><b>Chip</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Age</b></td>
+<td><b>Sex</b></td>
+<td><b>Location</b></td>
+</tr>
+$$FOOT
+</table>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$broughtby</td>
+<td>$thedate</td>
+<td>$animalname</td>
+<td>$sheltercode</td>
+<td>$reason</td>
+<td>$identichipnumber</td>
+<td>$animaltype</td>
+<td>$speciesname</td>
+<td>$animalage</td>
+<td>$sex</td>
+<td>$locationname</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

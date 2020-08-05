@@ -1,0 +1,106 @@
+CKAN Animal Data
+###
+Movements
+###
+Any
+###
+Used to post animal movement on the city data portal.
+###
+en
+###
+select  a.id,
+        a.DateBroughtIn      as IntakeDate,
+       ir.ReasonName         as IntakeReason,
+        a.IsTransfer,
+        a.ShelterCode,
+        a.IdentichipNumber,
+        a.AnimalName,
+        a.breedname,
+        c.basecolour,
+        s.SpeciesName,
+        a.AnimalAge,
+        x.Sex                as SexName,
+        l.LocationName       as Location,
+        d.MovementDate,
+        m.MovementType,
+        d.IsTrial,
+        d.ReturnDate,
+       rr.ReasonName         as ReturnedReason,
+        a.DeceasedDate,
+       dr.ReasonName         as DeceasedReason,
+        a.DiedOffShelter,
+        a.PutToSleep,
+        a.IsDOA
+from      animal           a
+left join entryreason     ir on ir.ID=a.EntryReasonID
+left join basecolour       c on  c.id=a.basecolourid
+left join species          s on  s.ID=a.SpeciesID
+left join lksex            x on  x.ID=a.Sex
+left join internallocation l on  l.ID=a.ShelterLocation
+left join adoption         d on  a.id=d.AnimalID
+left join entryreason     rr on rr.ID=d.ReturnedReasonID
+     join lksmovementtype  m on  m.ID=d.MovementType
+left join deathreason     dr on dr.ID=a.PTSReasonID
+where a.NonShelterAnimal=0
+order by a.id, d.MovementDate;
+###
+$$HEADER
+<table>
+    <thead>
+        <tr><th>animal_id</th>
+            <th>IntakeDate</th>
+            <th>IntakeReason</th>
+            <th>IsTransfer</th>
+            <th>ShelterCode</th>
+            <th>IdentichipNumber</th>
+            <th>AnimalName</th>
+            <th>breedname</th>
+            <th>basecolour</th>
+            <th>SpeciesName</th>
+            <th>AnimalAge</th>
+            <th>SexName</th>
+            <th>Location</th>
+            <th>MovementDate</th>
+            <th>MovementType</th>
+            <th>IsTrial</th>
+            <th>ReturnDate</th>
+            <th>ReturnedReason</th>
+            <th>DeceasedDate</th>
+            <th>DeceasedReason</th>
+            <th>DiedOffShelter</th>
+            <th>PutToSleep</th>
+            <th>IsDOA</th>
+        </tr>
+    </thead>
+    <tbody>
+HEADER$$
+$$BODY
+        <tr><td>$id</td>
+            <td>$IntakeDate</td>
+            <td>$IntakeReason</td>
+            <td>$IsTransfer</td>
+            <td>$ShelterCode</td>
+            <td>$IdentichipNumber</td>
+            <td>$AnimalName</td>
+            <td>$breedname</td>
+            <td>$basecolour</td>
+            <td>$SpeciesName</td>
+            <td>$AnimalAge</td>
+            <td>$SexName</td>
+            <td>$Location</td>
+            <td>$MovementDate</td>
+            <td>$MovementType</td>
+            <td>$IsTrial</td>
+            <td>$ReturnDate</td>
+            <td>$ReturnedReason</td>
+            <td>$DeceasedDate</td>
+            <td>$DeceasedReason</td>
+            <td>$DiedOffShelter</td>
+            <td>$PutToSleep</td>
+            <td>$IsDOA</td>
+        </tr>
+BODY$$
+$$FOOTER
+    </tbody>
+</table>
+FOOTER$$

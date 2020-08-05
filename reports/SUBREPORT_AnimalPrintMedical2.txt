@@ -1,0 +1,24 @@
+SUBREPORT_AnimalPrintMedical2
+###
+Auditing
+###
+Any
+###
+A complete printout of an animal record.
+###
+en
+###
+SELECT * FROM animalmedical
+WHERE animalmedical.AnimalID = $PARENTKEY$
+ORDER BY StartDate
+###
+$$HEADER
+<table cellpadding="5">
+<tr><th>Started</th><th>Treatment</th><th>Dosage</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$STARTDATE</td><td>$TREATMENTNAME</td><td>$DOSAGE</td><td>$COMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$

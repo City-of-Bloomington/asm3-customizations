@@ -1,0 +1,134 @@
+Unused person records (modified from original)
+###
+Auditing
+###
+Any
+###
+All person records that have no link to other records
+###
+en
+###
+SELECT DISTINCT
+    o.ID, o.OwnerName,o.OwnerAddress, o.OwnerTown, o.OwnerCounty, o.OwnerPostcode, o.HomeTelephone, o.WorkTelephone, o.MobileTelephone, o.EmailAddress, o.OwnerTitle, o.OwnerForenames,o.OwnerSurname, o.MembershipExpiryDate, o.AdditionalFlags,
+    ad.OwnerID,
+    ar.ReturnedByOwnerID,
+    af.OwnerID,
+    al.OwnerID,
+    aw.OwnerID,
+    at.AdministeringVetID,
+    am.AdministeringVetID,
+    av.AdministeringVetID,
+    ca.OwnerID,
+    oc.OwnerID,
+    od.OwnerID,
+    oi.OwnerID,
+    ol.OwnerID,
+    ow.OwnerID,
+    ot.OwnerID,
+    ov.OwnerID,
+    us.OwnerID,
+    a1.OriginalOwnerID,
+    a2.BroughtInByOwnerID,
+    a3.CurrentVetID,
+    a4.OwnersVetID,
+    a5.AdoptionCoordinatorID,
+    a6.NeuteredByVetID,
+    ac1.OwnerID,
+    ac2.Owner2ID,
+    ac3.Owner3ID,
+    at1.DriverOwnerID,
+    at2.PickupOwnerID,
+    at3.DropoffOwnerID
+
+FROM owner o
+left join adoption               ad on o.ID= ad.OwnerID
+left join adoption               ar on o.ID= ar.ReturnedByOwnerID
+left join animalfound            af on o.ID= af.OwnerID
+left join animallost             al on o.ID= al.OwnerID
+left join animalwaitinglist      aw on o.ID= aw.OwnerID
+left join animaltest             at on o.ID= at.AdministeringVetID
+left join animalmedicaltreatment am on o.ID= am.AdministeringVetID
+left join animalvaccination      av on o.ID= av.AdministeringVetID
+left join clinicappointment      ca on o.ID= ca.OwnerID
+left join ownercitation          oc on o.ID= oc.OwnerID
+left join ownerdonation          od on o.ID= od.OwnerID
+left join ownerinvestigation     oi on o.ID= oi.OwnerID
+left join ownerlicence           ol on o.ID= ol.OwnerID
+left join ownerrota              ow on o.ID= ow.OwnerID
+left join ownertraploan          ot on o.ID= ot.OwnerID
+left join ownervoucher           ov on o.ID= ov.OwnerID
+left join users                  us on o.ID= us.OwnerID
+left join animal                 a1 on o.ID= a1.OriginalOwnerID
+left join animal                 a2 on o.ID= a2.BroughtInByOwnerID
+left join animal                 a3 on o.ID= a3.CurrentVetID
+left join animal                 a4 on o.ID= a4.OwnersVetID
+left join animal                 a5 on o.ID= a5.AdoptionCoordinatorID
+left join animal                 a6 on o.ID= a6.NeuteredByVetID
+left join animalcontrol         ac1 on o.ID=ac1.OwnerID
+left join animalcontrol         ac2 on o.ID=ac2.Owner2ID
+left join animalcontrol         ac3 on o.ID=ac3.Owner3ID
+left join animaltransport       at1 on o.ID=at1.DriverOwnerID
+left join animaltransport       at2 on o.ID=at2.PickupOwnerID
+left join animaltransport       at3 on o.ID=at3.DropoffOwnerID
+
+where  ad.OwnerID               is null
+  and  ar.ReturnedByOwnerID     is null
+  and  af.OwnerID               is null
+  and  al.OwnerID               is null
+  and  aw.OwnerID               is null
+  and  at.AdministeringVetID    is null
+  and  am.AdministeringVetID    is null
+  and  av.AdministeringVetID    is null
+  and  ca.OwnerID               is null
+  and  oc.OwnerID               is null
+  and  od.OwnerID               is null
+  and  oi.OwnerID               is null
+  and  ol.OwnerID               is null
+  and  ow.OwnerID               is null
+  and  ot.OwnerID               is null
+  and  ov.OwnerID               is null
+  and  us.OwnerID               is null
+  and  a1.OriginalOwnerID       is null
+  and  a2.BroughtInByOwnerID    is null
+  and  a3.CurrentVetID          is null
+  and  a4.OwnersVetID           is null
+  and  a5.AdoptionCoordinatorID is null
+  and  a6.NeuteredByVetID       is null
+  and ac1.OwnerID               is null
+  and ac2.Owner2ID              is null
+  and ac3.Owner3ID              is null
+  and at1.DriverOwnerID         is null
+  and at2.PickupOwnerID         is null
+  and at3.DropoffOwnerID        is null
+
+ORDER BY o.OwnerName;
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Name</th>
+<th>Address</th>
+<th>Home</th>
+<th>Work</th>
+<th>Mobile</th>
+<th>Email</th>
+<th>Flags</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td><a target="_blank" href="person?id=$ID">$OWNERNAME</a></td>
+<td>$OWNERADDRESS<br/>
+$OWNERTOWN, $OWNERCOUNTY $OWNERPOSTCODE</td>
+<td>$HOMETELEPHONE</td>
+<td>$WORKTELEPHONE</td>
+<td>$MOBILETELEPHONE</td>
+<td>$EMAILADDRESS</td>
+<td>$ADDITIONALFLAGS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

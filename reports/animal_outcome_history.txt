@@ -1,0 +1,112 @@
+Animal Outcome History
+###
+Inventories
+###
+Any
+###
+List of animal with outcome
+###
+en
+###
+select
+a.id,
+a.animalname as name,
+t.animaltype,
+breedname,
+s.speciesname,
+c.basecolour,
+sheltercode,
+dateofbirth,
+ls.sex,
+case when neutered = 1 then 'Yes' else 'No' end as neutered,
+reasonforentry,
+datebroughtin,
+case when puttosleep=1 then 'Yes' else 'No' end as Put_to_sleep,
+case when isdoa=1 then 'Yes' else 'No' end as Dead_on_arrival,
+case when isnotavailableforadoption = 0 then 'No' else 'Yes' end as Not_Available_for_Adoption,
+l.locationname,
+weight,
+mt.movementtype,
+activemovementdate,
+activemovementreturn,
+case when haspermanentfoster=1 then 'Yes' else 'No' end as HasPermanentFoster,
+displaylocation,
+mostrecententrydate,
+daysonshelter,
+agegroupactivemovement,
+animalage
+from animal a
+left join animaltype t on t.id=a.animaltypeid
+left join species s on s.id=a.speciesid
+left join lksmovementtype mt on mt.id=a.activemovementtype
+left join basecolour c on c.id=a.basecolourid
+left join lksex ls on ls.id=a.sex
+left join internallocation l on l.id=a.shelterlocation
+order by id desc;
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>ID</th>
+<th>NAME</th>
+<th>ANIMALTYPE</th>
+<th>BREEDNAME</th>
+<th>SPECIESNAME</th>
+<th>BASECOLOUR</th>
+<th>SHELTERCODE</th>
+<th>DATEOFBIRTH</th>
+<th>SEX</th>
+<th>NEUTERED</th>
+<th>REASONFORENTRY</th>
+<th>DATEBROUGHTIN</th>
+<th>PUT_TO_SLEEP</th>
+<th>DEAD_ON_ARRIVAL</th>
+<th>NOT_AVAILABLE_FOR_ADOPTION</th>
+<th>LOCATIONNAME</th>
+<th>WEIGHT</th>
+<th>MOVEMENTTYPE</th>
+<th>ACTIVEMOVEMENTDATE</th>
+<th>ACTIVEMOVEMENTRETURN</th>
+<th>HASPERMANENTFOSTER</th>
+<th>DISPLAYLOCATION</th>
+<th>MOSTRECENTENTRYDATE</th>
+<th>DAYSONSHELTER</th>
+<th>AGEGROUPACTIVEMOVEMENT</th>
+<th>ANIMALAGE</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$ID</td>
+<td>$NAME</td>
+<td>$ANIMALTYPE</td>
+<td>$BREEDNAME</td>
+<td>$SPECIESNAME</td>
+<td>$BASECOLOUR</td>
+<td>$SHELTERCODE</td>
+<td>$DATEOFBIRTH</td>
+<td>$SEX</td>
+<td>$NEUTERED</td>
+<td>$REASONFORENTRY</td>
+<td>$DATEBROUGHTIN</td>
+<td>$PUT_TO_SLEEP</td>
+<td>$DEAD_ON_ARRIVAL</td>
+<td>$NOT_AVAILABLE_FOR_ADOPTION</td>
+<td>$LOCATIONNAME</td>
+<td>$WEIGHT</td>
+<td>$MOVEMENTTYPE</td>
+<td>$ACTIVEMOVEMENTDATE</td>
+<td>$ACTIVEMOVEMENTRETURN</td>
+<td>$HASPERMANENTFOSTER</td>
+<td>$DISPLAYLOCATION</td>
+<td>$MOSTRECENTENTRYDATE</td>
+<td>$DAYSONSHELTER</td>
+<td>$AGEGROUPACTIVEMOVEMENT</td>
+<td>$ANIMALAGE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

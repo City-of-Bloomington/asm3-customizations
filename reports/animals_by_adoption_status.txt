@@ -1,0 +1,94 @@
+Shelter Inventory separated by adoption and not for adoption and location
+###
+Inventories
+###
+Any
+###
+Shelter Inventory separated by adoption and not for adoption and location
+###
+en
+###
+SELECT
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE l.LocationName END AS LocationName,
+CASE WHEN a.isNotAvailableForAdoption = 1 THEN 'Not Adoptable' ELSE 'Adoptable' END AS Adoptable,
+a.ShelterCode,
+a.AnimalName,
+a.BreedName,
+(SELECT Size FROM lksize WHERE ID = a.Size) AS aSize,
+(SELECT Sex FROM lksex WHERE ID = a.Sex) AS aSex,
+(SELECT Name FROM lksyesno WHERE ID = a.Neutered) AS aNeutered,
+a.AnimalAge,
+a.TimeOnShelter,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithCats) AS aGoodWithCats,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithDogs) AS aGoodWithDogs,
+(SELECT Name FROM lksynun WHERE ID = a.IsGoodWithChildren) AS aGoodWithKids,
+(SELECT Name FROM lksynun WHERE ID = a.IsHouseTrained) AS aHouseTrained,
+a.ID AS animalid,
+a.AnimalComments,
+s.SpeciesName
+FROM animal a
+LEFT OUTER JOIN internallocation l ON l.ID = a.ShelterLocation
+LEFT OUTER JOIN species s ON s.ID = a.SpeciesID
+WHERE a.Archived = 0 and a.deceasedDate is null
+ORDER BY
+CASE WHEN a.ActiveMovementType = 2 THEN 'Foster' ELSE l.LocationName END,
+CASE WHEN a.isNotAvailableForAdoption = 1 THEN 'Not Adoptable' ELSE 'Adoptable' END,
+s.SpeciesName, a.AnimalName
+###
+$$HEADER
+HEADER$$
+
+$$GROUP_LocationName
+$$HEAD
+<h1>$LocationName</h1>
+$$FOOT
+<p>Total $LOCATIONNAME: {COUNT.ANIMALID}</p>
+GROUP$$
+
+$$GROUP_SpeciesName
+$$HEAD
+<h2>$SpeciesName</h2>
+<table border="1" width="100%">
+<tr>
+<th>Adoptable</th>
+<th>Code</th>
+<th>Name</th>
+<th>Breed</th>
+<th>Size</th>
+<th>Sex/Fixed</th>
+<th>Age</th>
+<th>In Shelter</th>
+<th>Current Location</th>
+<th>OK With</th>
+<th>House Trnd</th>
+<th>Picture</th>
+<th>Comments</th>
+</tr>
+$$FOOT
+</table>
+<p>Total $SPECIESNAME at $LOCATIONNAME: {COUNT.ANIMALID}</p>
+GROUP$$
+
+$$BODY
+<tr>
+<td>$ADOPTABLE</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$BREEDNAME</td>
+<td>$ASIZE</td>
+<td>$ASEX / $ANEUTERED</td>
+<td>$ANIMALAGE</td>
+<td>$TIMEONSHELTER</td>
+<td>$LOCATIONNAME</td>
+<td>Cats: $AGOODWITHCATS<br/>
+Dogs: $AGOODWITHDOGS<br/>
+Kids: $AGOODWITHKIDS</td>
+<td>$AHOUSETRAINED</td>
+<td><a href="{IMAGE.$ANIMALID}"><img border="0" src="{IMAGE.$ANIMALID}" width="75" height="50" /></a></td>
+<td>$ANIMALCOMMENTS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+<p>Total: {COUNT.ANIMALID}</p>
+FOOTER$$

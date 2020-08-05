@@ -1,0 +1,39 @@
+Incident dispatch and response times
+###
+Stats
+###
+Any
+###
+Incidents dispatch and response times in hours
+###
+en
+###
+SELECT incidentname As INCIDENT,
+       avg(extract(epoch from dispatchdatetime  - incidentdatetime)/3600) As DISPATCH,
+       avg(extract(epoch from respondeddatetime - dispatchdatetime)/3600) As RESPONSE
+from  v_animalcontrol
+where respondeddatetime is not null
+  and incidentdatetime >= '$ASK DATE incidents between$' and incidentdatetime <='$ASK DATE and$'
+  group by incidentname
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Incident</th>
+<th>Average Dispatch Hours</th>
+<th>Average Response Hours</th>
+</tr>
+
+HEADER$$
+
+$$BODY
+<tr>
+<td>$INCIDENT</td>
+<td>$DISPATCH</td>
+<td>$RESPONSE</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

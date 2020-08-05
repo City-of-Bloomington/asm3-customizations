@@ -1,0 +1,70 @@
+Kitten Intake
+###
+Stats
+###
+Any
+###
+kittens taken into the shelter between two dates aged between 0 and 6 weeks of age
+###
+en
+###
+$VAR dfrom DATE Enter from date$
+$VAR dto DATE Enter to date$
+
+select sum(totalcats) as totalCats, sum(pottosleep) as puttosleep,sum(totaltreat) as totaltreat,sum(totaldied) as totaldied
+from (
+(select count(*) as totalcats,0 as pottosleep,0 as totaltreat, 0 as totaldied
+from v_animal a
+where datebroughtin >= '$@dfrom$' and
+datebroughtin <='$@dto$' and speciesid=2 and daysonshelter > 0
+and date_part('day', datebroughtin - dateofbirth) < 42)
+union
+(select 0 as totalcats,count(*) AS pottosleep,0 as totaltreat,0 as totaldied
+from v_animal a where datebroughtin >= '$@dfrom$' and
+datebroughtin <='$@dto$' and speciesid=2
+and date_part('day', datebroughtin - dateofbirth) < 42 and puttosleep = 1)
+union
+(select 0 as totalcats ,0 as pottosleep,count(distinct(a.id)) as totaltreat,0 as totaldied
+from v_animal a,v_animalmedicaltreatment at
+where a.datebroughtin >= '$@dfrom$' and
+a.datebroughtin <='$@dto$'
+and a.speciesid=2
+and a.daysonshelter > 0
+and date_part('day', a.datebroughtin - a.dateofbirth) < 42
+and a.id = at.animalid and at.startdate >= '$@dfrom$'
+and at.startdate <= '$@dto$')
+union
+(select 0 as totalcats,0 as pottosleep,0 as totaltreat,count(distinct(a.id)) as totaldied
+from v_animal a,v_animalmedicaltreatment at
+where a.datebroughtin >= '$@dfrom$' and
+a.datebroughtin <='$@dto$'
+and a.speciesid=2
+and a.daysonshelter > 0
+and date_part('day', a.datebroughtin - a.dateofbirth) < 42
+and a.id = at.animalid and at.startdate >= '$@dfrom$'
+and at.startdate <= '$@dto$' and at.deceaseddate is not null)
+) tt;
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Total Received</th>
+<th>Total Treated</th>
+<th>Total Euthonized</th>
+<th>Total Died During Treatment</th>
+</tr>
+
+HEADER$$
+
+$$BODY
+<tr>
+<td>$totalCats</td>
+<td>$totalTreat</td>
+<td>$puttosleep</td>
+<td>$totaldied</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$

@@ -1,0 +1,33 @@
+SUBREPORT_AnimalPrintVaccination2
+###
+Auditing
+###
+Any
+###
+print vaccination records
+###
+en
+###
+SELECT vaccinationtype.VaccinationType,
+animalvaccination.Cost,
+animalvaccination.DateRequired,
+animalvaccination.DateOfVaccination,
+animalvaccination.DateExpires,
+animalvaccination.Comments AS VaccComments,
+CASE WHEN vo.OwnerName Is Not Null THEN vo.OwnerName ELSE animalvaccination.LastChangedBy END AS GivenBy
+FROM animalvaccination
+INNER JOIN vaccinationtype ON vaccinationtype.ID = animalvaccination.VaccinationID
+LEFT OUTER JOIN owner vo ON vo.ID = animalvaccination.AdministeringVetID
+WHERE animalvaccination.AnimalID = $PARENTKEY$
+ORDER BY DateOfVaccination
+###
+$$HEADER
+<table cellpadding="5">
+<tr><th>Type</th><th>Given</th><th>Expires</th><th>By</th><th>Comments</th></tr>
+HEADER$$
+$$BODY
+<tr><td>$VACCINATIONTYPE</td><td>$DATEOFVACCINATION</td><td>$DATEEXPIRES</td><td>$GIVENBY</td><td>$VACCCOMMENTS</td></tr>
+BODY$$
+$$FOOTER
+</table>
+FOOTER$$

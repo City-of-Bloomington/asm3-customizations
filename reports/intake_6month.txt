@@ -1,0 +1,205 @@
+Intake by Type and Pickup Location (6 Month Threshold)
+###
+Auditing
+###
+Any
+###
+Intake by Type and Pickup Location based on 6 month of age at time of intake
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT * FROM
+(
+SELECT DateBroughtIn AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+CASE WHEN datebroughtin - dateofbirth  < interval '6 month' THEN 'less than 6' ELSE 'More than 6' END as AgeType,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM pickuplocation WHERE ID = animal.pickuplocationid) AS Location,
+ animal.hiddenanimaldetails AS HiddenDetails,
+(SELECT OwnerName||' '||ownerAddress FROM owner WHERE ID = animal.originalOwnerID) AS OwnerName,
+ (SELECT OwnerName||' '||ownerAddress FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName2,
+'Animals Brought In' AS CategoryName
+FROM animal
+WHERE IsTransfer = 0 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
+
+UNION ALL SELECT DateBroughtIn AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = animal.EntryReasonID) AS Reason,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+CASE WHEN datebroughtin - dateofbirth  < interval '6 month' THEN 'less than 6' ELSE 'More than 6' END as AgeType,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM pickuplocation WHERE ID = animal.pickuplocationid) AS Location,
+ animal.hiddenanimaldetails AS HiddenDetails,
+(SELECT OwnerName||' '||ownerAddress FROM owner WHERE ID = animal.originalOwnerID) AS OwnerName,
+(SELECT OwnerName||' '||OwnerAddress FROM owner WHERE ID = animal.BroughtInByOwnerID) AS OwnerName2,
+'Animals Transferred In' AS CategoryName
+FROM animal
+WHERE IsTransfer = 1 AND DateBroughtIn >= '$@from$' AND DateBroughtIn <= '$@to$ 23:59:59' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+CASE WHEN datebroughtin - dateofbirth  < interval '6 month' THEN 'less than 6' ELSE 'More than 6' END as AgeType,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM pickuplocation WHERE ID = animal.pickuplocationid) AS Location,
+ animal.hiddenanimaldetails AS HiddenDetails,
+
+(SELECT OwnerName||' '||ownerAddress FROM owner WHERE ID = animal.originalOwnerID) AS OwnerName,
+(SELECT OwnerName||' '||OwnerAddress FROM owner WHERE ID = adoption.OwnerID) AS OwnerName2,
+'Animals Returned From Adoption' AS CategoryName
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 0 AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+CASE WHEN datebroughtin - dateofbirth  < interval '6 month' THEN 'less than 6' ELSE 'More than 6' END as AgeType,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM pickuplocation WHERE ID = animal.pickuplocationid) AS Location,
+animal.hiddenanimaldetails AS HiddenDetails,
+(SELECT OwnerName||' '||ownerAddress FROM owner WHERE ID = animal.originalOwnerID) AS OwnerName,
+(SELECT OwnerName||' '||OwnerAddress FROM owner WHERE ID = adoption.OwnerID) AS OwnerName2,
+'Animals Returned From Trial Adoption' AS CategoryName
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 1 AND adoption.MovementDate Is Not Null AND adoption.IsTrial = 1 AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+CASE WHEN DeceasedDate Is Null OR DeceasedDate >= adoption.ReturnDate THEN 'Foster Return' ELSE 'Died On Foster' END AS Reason,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+CASE WHEN datebroughtin - dateofbirth  < interval '6 month' THEN 'less than 6' ELSE 'More than 6' END as AgeType,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM pickuplocation WHERE ID = animal.pickuplocationid) AS Location,
+animal.hiddenanimaldetails AS HiddenDetails,
+(SELECT OwnerName||' '||ownerAddress FROM owner WHERE ID = animal.originalOwnerID) AS OwnerName,
+(SELECT OwnerName||' '||OwnerAddress FROM owner WHERE ID = adoption.OwnerID) AS OwnerName2,
+'Animals Returned From Fostering' AS CategoryName
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 2 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+(SELECT ReasonName FROM entryreason WHERE ID = adoption.ReturnedReasonID) AS Reason,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+CASE WHEN datebroughtin - dateofbirth  < interval '6 month' THEN 'less than 6' ELSE 'More than 6' END as AgeType,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM pickuplocation WHERE ID = animal.pickuplocationid) AS Location,
+animal.hiddenanimaldetails AS HiddenDetails,
+(SELECT OwnerName||' '||ownerAddress FROM owner WHERE ID = animal.originalOwnerID) AS OwnerName,
+(SELECT OwnerName||' '||OwnerAddress FROM owner WHERE ID = adoption.OwnerID) AS OwnerName2,
+'Animals Returned From Transfer' AS CategoryName
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType = 3 AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+UNION ALL SELECT adoption.ReturnDate AS thedate,
+'' AS Reason,
+ShelterCode,
+IdentichipNumber,
+AnimalName,
+CASE WHEN datebroughtin - dateofbirth  < interval '6 month' THEN 'less than 6' ELSE 'More than 6' END as AgeType,
+(SELECT AnimalType FROM animaltype WHERE ID = animal.AnimalTypeID) AS AnimalTypeName,
+(SELECT SpeciesName FROM species WHERE ID = animal.SpeciesID) AS SpeciesName,
+AnimalAge,
+(SELECT Sex FROM lksex WHERE ID = animal.Sex) AS SexName,
+(SELECT LocationName FROM pickuplocation WHERE ID = animal.pickuplocationid) AS Location,
+animal.hiddenanimaldetails AS HiddenDetails,
+(SELECT OwnerName||' '||ownerAddress FROM owner WHERE ID = animal.originalOwnerID) AS OwnerName,
+(SELECT OwnerName||' '||OwnerAddress FROM owner WHERE ID = adoption.OwnerID) AS OwnerName2,
+'Animals Returned From Other' AS CategoryName
+FROM animal
+INNER JOIN adoption ON adoption.AnimalID = animal.ID
+WHERE adoption.MovementType NOT IN (1, 2, 3) AND adoption.MovementDate Is Not Null AND adoption.ReturnDate >= '$@from$' AND adoption.ReturnDate <= '$@to$' AND NonShelterAnimal = 0
+) dummy
+WHERE thedate >= '$@from$' AND thedate <= '$@to$ 23:59:59'
+
+ORDER BY AgeType, CategoryName, Location, AnimalTypeName
+###
+$$HEADER
+HEADER$$
+
+$$HEAD
+<h1>Intake by Type and Location (6 Month Threshold)</h1>
+$$FOOT
+<h1>Total: {COUNT.thedate}</h1>
+GROUP$$
+
+$$GROUP_CategoryName
+$$HEAD
+<h2>$CategoryName</h2>
+$$FOOT
+<h3>Total $CategoryName: {COUNT.thedate}</h3>
+GROUP$$
+
+$$GROUP_Location
+$$HEAD
+<h2>$Location</h2>
+<table border=1><tr>
+<td><b>Age Type(6 Month Threshold)</b></td>
+<td><b>Date</b></td>
+<td><b>Reason</b></td>
+<td><b>Code</b></td>
+<td><b>Name</b></td>
+<td><b>Type</b></td>
+<td><b>Species</b></td>
+<td><b>Sex</b></td>
+<td><b>Type</b></td>
+<td><b>Owner</b></td>
+  <td><b>Picked-up by</b></td>
+<td><b>Hidden Details</b></td>
+</tr>
+$$FOOT
+</table>
+<h2>Total $Location: {COUNT.thedate}</h2>
+GROUP$$
+
+$$BODY<tr>
+<td>$AGETYPE</td>
+<td>$THEDATE</td>
+<td>$REASON</td>
+<td>$SHELTERCODE</td>
+<td>$ANIMALNAME</td>
+<td>$ANIMALTYPENAME</td>
+<td>$SPECIESNAME</td>
+<td>$SEXNAME</td>
+<td>$ANIMALTYPENAME</td>
+<td>$OWNERNAME</td>
+  <td>$OWNERNAME2</td>
+<td>$HIDDENDETAILS</td>
+</tr>
+BODY$$
+
+$$FOOTER
+FOOTER$$

@@ -1,0 +1,48 @@
+Average Daily Number of Animals In Care for given period
+###
+Statistics
+###
+Any
+###
+Average Daily Number of Animals In Care for given period
+###
+en
+###
+$VAR from DATE Enter from date$
+$VAR to DATE Enter to date$
+
+SELECT
+s.SpeciesName,
+i.LocationName,
+round(CAST(SUM(a.DaysOnShelter)/
+(date_part('DAY', TIMESTAMP '$@to$' - '$@from$')) AS NUMERIC),2)
+AS activeonshelter
+FROM animal a
+INNER JOIN species s ON s.ID = a.SpeciesID
+LEFT OUTER JOIN internallocation i ON i.ID = a.ShelterLocation
+WHERE a.DaysOnShelter > 0
+AND a.NonShelterAnimal = 0
+AND a.DateBroughtIn > '$@from$' AND a.DateBroughtIn < '$@to$'
+GROUP BY s.SpeciesName,i.LocationName
+ORDER BY activeonshelter
+###
+$$HEADER
+<table border="1">
+<tr>
+<th>Species</th>
+<th>Location</th>
+<th>Average in Care</th>
+</tr>
+HEADER$$
+
+$$BODY
+<tr>
+<td>$SPECIESNAME</td>
+<td>$LOCATIONNAME</td>
+<td>$ACTIVEONSHELTER</td>
+</tr>
+BODY$$
+
+$$FOOTER
+</table>
+FOOTER$$
